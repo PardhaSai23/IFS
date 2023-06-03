@@ -3,7 +3,9 @@ pipeline {
     stages {
         stage('Generate Folder Structure') {
             steps {
-                bat '''cd C:\\Program Files (x86)\\IFS\\IFSConfigBuilder10
+                bat '''
+                CD D:\IFS_J\Build && RMDIR /S /Q
+                CD C:\\Program Files (x86)\\IFS\\IFSConfigBuilder10
                 IfsConfigBuilder .\\setup.ini .\\log.txt
                 type log.txt'''
             }
