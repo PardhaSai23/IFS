@@ -18,5 +18,12 @@ pipeline {
                 echo '----------------------------Build step is executed----------------------------'
             }
         }
+        stage('Installer') {
+            steps {
+                bat '''cd /d D:\\ifs_exp
+                installer.cmd "D:\\IFS_J\\Build" "D:\\ifs_exp" true true ifsapp ifssys'''
+                echo '----------------------------Installation step is executed----------------------------'
+            }
+        }
     }
 }
