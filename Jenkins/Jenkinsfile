@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Build Folder Structure using IFS Config Builder') {
             steps {
-                bat '''cd D:\\IFS_J\\Build && RMDIR /S /Q .
+                bat '''cd /d D:\\IFS_J\\Build && RMDIR /S /Q .
                 cd C:\\Program Files (x86)\\IFS\\IFSConfigBuilder10
                 IfsConfigBuilder .\\setup.ini .\\log.txt
                 type log.txt'''
@@ -12,7 +12,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                bat '''cd D:\\Build_home\\build
+                bat '''cd /d D:\\Build_home\\build
                 set DELIVERY=D:\\IFS_J\\Build
                 build.cmd SERVER DB'''
                 echo 'Build step is executed.'
