@@ -4,7 +4,7 @@ pipeline {
         stage('Build Folder Structure using IFS Config Builder') {
             steps {
                 bat '''cd /d D:\\IFS_J\\Build && RMDIR /S /Q .
-                cd C:\\Program Files (x86)\\IFS\\IFSConfigBuilder10
+                cd /c C:\\Program Files (x86)\\IFS\\IFSConfigBuilder10
                 IfsConfigBuilder .\\setup.ini .\\log.txt
                 type log.txt'''
                 echo 'Building Folder Structure step is executed.'
