@@ -9,6 +9,12 @@ pipeline {
                 type log.txt'''
                 echo 'Building Folder Structure step is executed.'
             }
+            steps {
+                bat '''CD D:\\Build_home\\build
+                set DELIVERY=D:\\IFS_J\\Build
+                build.cmd SERVER DB'''
+                echo 'Build step is executed.'
+            }
         }
     }
 }
