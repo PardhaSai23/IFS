@@ -13,7 +13,7 @@ pipeline {
         stage('Build') {
             steps {
                 bat '''cd D:\\Build_home\\build
-                set DELIVERY=D:\IFS_J\Build
+                set DELIVERY=D:\\IFS_J\\Build
                 build.cmd SERVER DB'''
                 echo 'Build step is executed.'
             }
