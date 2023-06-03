@@ -1,0 +1,270 @@
+-----------------------------------------------------------------------------
+--
+--  Logical unit: CReportTest
+--
+--  Report:       CReportTest
+--
+--  IFS Developer Studio Template Version 1.3
+--
+--  NOTE: This file is generated and will be overwritten at next model change
+-----------------------------------------------------------------------------
+
+
+-----------------------------------------------------------------------------
+-------------------- PACKAGE SPECIFICATION ----------------------------------
+-----------------------------------------------------------------------------
+
+PROMPT Creating C_REPORT_TEST_RPI specification
+
+CREATE OR REPLACE PACKAGE C_REPORT_TEST_RPI AS
+
+module_ CONSTANT VARCHAR2(6) := 'ORDER';
+lu_name_ CONSTANT VARCHAR2(25) := 'CReportTest';
+
+PROCEDURE Execute_Report (
+   report_attr_    IN VARCHAR2,
+   parameter_attr_ IN VARCHAR2 );
+
+FUNCTION Test (
+   limit_                    IN NUMBER)
+   RETURN NUMBER;
+
+PROCEDURE Init;
+
+END C_REPORT_TEST_RPI;
+/
+SHOW ERROR
+
+-----------------------------------------------------------------------------
+-------------------- VIEWS FOR REPORT META DATA -----------------------------
+-----------------------------------------------------------------------------
+
+PROMPT Creating report table C_REPORT_TEST_RPT
+
+DECLARE
+   columns_    Database_SYS.ColumnTabType;
+   table_name_ VARCHAR2(30) := 'C_REPORT_TEST_RPT';
+BEGIN
+   Database_SYS.Reset_Column_Table(columns_);
+   Database_SYS.Set_Table_Column(columns_, 'RESULT_KEY', 'NUMBER', 'N');
+   Database_SYS.Set_Table_Column(columns_, 'ROW_NO', 'NUMBER', 'N');
+   Database_SYS.Set_Table_Column(columns_, 'PARENT_ROW_NO', 'NUMBER', 'N');
+   Database_SYS.Set_Table_Column(columns_, 'ROWVERSION', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'LIMIT', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'UNDEFINED1', 'VARCHAR2(10)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'UNDEFINED2', 'VARCHAR2(10)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'UNDEFINED3', 'VARCHAR2(10)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'S_NO', 'NUMBER', 'Y');
+   Database_SYS.Create_Or_Replace_Table(table_name_, columns_, '&IFSAPP_REPORT_DATA', NULL, TRUE);
+END;
+/
+
+DECLARE
+   columns_    Database_SYS.ColumnTabType;
+   table_name_ VARCHAR2(30) := 'C_REPORT_TEST_RPT';
+   index_name_ VARCHAR2(30) := 'C_REPORT_TEST_RPK';
+BEGIN
+   Database_SYS.Reset_Column_Table(columns_);
+   Database_SYS.Set_Table_Column(columns_, 'RESULT_KEY');
+   Database_SYS.Set_Table_Column(columns_, 'ROW_NO');
+   Database_SYS.Set_Table_Column(columns_, 'PARENT_ROW_NO');
+   Database_SYS.Create_Constraint(table_name_, index_name_, columns_, 'P', '&IFSAPP_REPORT_INDEX', NULL, TRUE, TRUE);
+   Database_SYS.Reset_Column_Table(columns_);
+END;
+/
+
+PROMPT Creating report view C_REPORT_TEST_REP
+
+CREATE OR REPLACE VIEW C_REPORT_TEST_REP AS
+SELECT RESULT_KEY, ROW_NO, PARENT_ROW_NO, ROWVERSION
+   ,LIMIT,UNDEFINED1,UNDEFINED2,UNDEFINED3,S_NO
+FROM   C_REPORT_TEST_RPT t
+WHERE EXISTS (SELECT 1 FROM allowed_report a WHERE a.result_key = t.result_key)
+WITH   read only;
+
+COMMENT ON TABLE C_REPORT_TEST_REP
+   IS 'LU=CReportTest^PROMPT=C Report Test^MODULE=ORDER^TITLETEXT=C Report Test^';
+
+COMMENT ON COLUMN C_REPORT_TEST_REP.result_key
+   IS 'FLAGS=M----^DATATYPE=NUMBER^';
+COMMENT ON COLUMN C_REPORT_TEST_REP.row_no
+   IS 'FLAGS=M----^DATATYPE=NUMBER^';
+COMMENT ON COLUMN C_REPORT_TEST_REP.limit
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Limit^QUERY=Limit:^QFLAGS=MWS--^';
+COMMENT ON COLUMN C_REPORT_TEST_REP.undefined1
+   IS 'FLAGS=A----^DATATYPE=STRING(10)^TITLE=Undefined1^';
+COMMENT ON COLUMN C_REPORT_TEST_REP.undefined2
+   IS 'FLAGS=A----^DATATYPE=STRING(10)^TITLE=Undefined2^';
+COMMENT ON COLUMN C_REPORT_TEST_REP.undefined3
+   IS 'FLAGS=A----^DATATYPE=STRING(10)^TITLE=Undefined3^';
+COMMENT ON COLUMN C_REPORT_TEST_REP.s_no
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=S No^';
+
+-----------------------------------------------------------------------------
+-------------------- REPORT REGISTRATION ------------------------------------
+-----------------------------------------------------------------------------
+
+BEGIN
+   Report_SYS.Define_Report_('C_REPORT_TEST_REP', 'ORDER', 'CReportTest', 'C Report Test', 'C_REPORT_TEST_RPT', 'C_REPORT_TEST_RPI.Execute_Report', 0);
+   Report_SYS.Define_Report_Text_('C_REPORT_TEST_REP', 'C_REPORT_TEST', 'Sample');
+   Report_SYS.Refresh_('C_REPORT_TEST_REP');
+   Report_Lu_Definition_API.Clear_Custom_Fields_For_Report('C_REPORT_TEST_REP');
+END;
+/
+
+-----------------------------------------------------------------------------
+-------------------- PACKAGE IMPLEMENTATION ---------------------------------
+-----------------------------------------------------------------------------
+
+PROMPT Creating C_REPORT_TEST_RPI implementation
+
+CREATE OR REPLACE PACKAGE BODY C_REPORT_TEST_RPI IS
+
+   TYPE binds$ IS RECORD (
+      limit                     NUMBER,
+      undefined1                VARCHAR2(32000),
+      undefined2                VARCHAR2(32000),
+      undefined3                VARCHAR2(32000));
+
+   CURSOR get_serial_number IS
+      SELECT LEVEL s_no
+            FROM DUAL
+      CONNECT BY LEVEL <= 100;
+
+-----------------------------------------------------------------------------
+-------------------- RESULT SET METHODS -------------------------------------
+-----------------------------------------------------------------------------
+
+--@IgnoreWrongParamOrder
+PROCEDURE Add_Result_Row___ (
+   result_key$_               IN NUMBER,
+   binds$_                    IN binds$,
+   rec_serial_number_         IN get_serial_number%ROWTYPE DEFAULT NULL,
+   row_no$_                   IN OUT NUMBER)
+IS
+BEGIN
+   INSERT INTO C_REPORT_TEST_RPT (
+      result_key,
+      limit,
+      undefined1,
+      undefined2,
+      undefined3,
+      s_no,
+      row_no, parent_row_no)
+   VALUES (
+      result_key$_,
+      binds$_.limit,
+      binds$_.undefined1,
+      binds$_.undefined2,
+      binds$_.undefined3,
+      rec_serial_number_.s_no,
+      row_no$_, 0);
+   row_no$_ := row_no$_+1;
+END Add_Result_Row___;
+
+-----------------------------------------------------------------------------
+-------------------- REPORT EXECUTION ---------------------------------------
+-----------------------------------------------------------------------------
+
+PROCEDURE Execute_Report (
+   report_attr_    IN VARCHAR2,
+   parameter_attr_ IN VARCHAR2 )
+IS
+   result_key$_              NUMBER;
+   row_no$_                  NUMBER := 1;
+   binds$_                   binds$;
+   xml$_                     CLOB;
+   outer_filter_attr$_       VARCHAR2(32000);
+   outer_filter_where$_      VARCHAR2(32000);
+   inner_filter_attr$_       VARCHAR2(32000);
+   inner_filter_where$_      VARCHAR2(32000);
+   has_serial_number_ BOOLEAN;
+   rec_serial_number_ get_serial_number%ROWTYPE;
+   par_serial_number_ binds$;
+BEGIN
+   General_SYS.Init_Method(lu_name_, 'C_REPORT_TEST_RPI', 'Execute_Report');
+   result_key$_                 := Client_SYS.Attr_Value_To_Number(Client_SYS.Get_Item_Value('RESULT_KEY', report_attr_));
+   binds$_.limit                := Client_SYS.Attr_Value_To_Number(Client_SYS.Get_Item_Value('LIMIT', parameter_attr_));
+
+   Xml_Record_Writer_SYS.Create_Report_Header(xml$_, 'C_REPORT_TEST_REP', 'C Report Test');
+   Xml_Record_Writer_SYS.Add_Element(xml$_, 'UNDEFINED1', binds$_.undefined1);
+   Xml_Record_Writer_SYS.Add_Element(xml$_, 'UNDEFINED2', binds$_.undefined2);
+   Xml_Record_Writer_SYS.Add_Element(xml$_, 'UNDEFINED3', binds$_.undefined3);
+
+   has_serial_number_ := FALSE;
+   par_serial_number_ := binds$_;
+   Xml_Record_Writer_SYS.Start_Element(xml$_, 'SERIAL_NUMBERS');
+   OPEN get_serial_number;
+   LOOP
+      FETCH get_serial_number INTO rec_serial_number_;
+      has_serial_number_ := get_serial_number%FOUND OR get_serial_number%ROWCOUNT > 0;
+      EXIT WHEN get_serial_number%NOTFOUND;
+      Xml_Record_Writer_SYS.Start_Element(xml$_, 'SERIAL_NUMBER');
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'S_NO', rec_serial_number_.s_no);
+      Xml_Record_Writer_SYS.End_Element(xml$_, 'SERIAL_NUMBER');
+      Add_Result_Row___(result_key$_,
+                        binds$_ => binds$_,
+                        rec_serial_number_ => rec_serial_number_,
+                        row_no$_ => row_no$_);
+      sys.dbms_session.sleep(60); -- Sleep for 60 seconds
+      
+      EXIT;
+   END LOOP;
+   CLOSE get_serial_number;
+   
+   Xml_Record_Writer_SYS.End_Element(xml$_, 'SERIAL_NUMBERS');
+   binds$_ := par_serial_number_;
+   IF NOT has_serial_number_ THEN
+      Add_Result_Row___(result_key$_,
+                        binds$_ => binds$_,
+                        row_no$_ => row_no$_);
+   END IF;
+
+   Xml_Record_Writer_SYS.End_Element(xml$_, 'C_REPORT_TEST_REP');
+   Report_SYS.Finish_Xml_Report('C_REPORT_TEST_REP', result_key$_, xml$_);
+   EXCEPTION
+      WHEN OTHERS THEN
+         IF get_serial_number%ISOPEN THEN
+            CLOSE get_serial_number;
+         END IF;
+         RAISE;
+END Execute_Report;
+
+-----------------------------------------------------------------------------
+-------------------- FOUNDATION1 METHODS ------------------------------------
+-----------------------------------------------------------------------------
+-- Test
+--   Invokes the report method for testing purposes.
+-- Init
+--   Dummy procedure that can be called at database startup to ensure that
+--   this package is loaded into memory for performance reasons only.
+-----------------------------------------------------------------------------
+
+FUNCTION Test (
+   limit_                    IN NUMBER)
+RETURN NUMBER
+IS
+   result_key_     NUMBER;
+   report_attr_    VARCHAR2(200);
+   parameter_attr_ VARCHAR2(32000);
+BEGIN
+   General_SYS.Init_Method(lu_name_, 'C_REPORT_TEST_RPI', 'Test');
+   Report_SYS.Get_Result_Key__(result_key_);
+   Client_SYS.Add_To_Attr('RESULT_KEY', result_key_, report_attr_);
+   IF (limit_ IS NOT NULL) THEN
+      Client_SYS.Add_To_Attr('LIMIT', limit_, parameter_attr_);
+   END IF;
+   Execute_Report(report_attr_, parameter_attr_);
+   RETURN result_key_;
+END Test;
+
+
+PROCEDURE Init
+IS
+BEGIN
+   NULL;
+END Init;
+
+END C_REPORT_TEST_RPI;
+/
+SHOW ERROR
