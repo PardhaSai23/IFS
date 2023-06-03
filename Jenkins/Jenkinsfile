@@ -1,9 +1,10 @@
 pipeline {
     agent any
     stages {
-        stage('Stage 1') {
+        stage('Generate Folder Structure') {
             steps {
-                echo 'Hello world!'
+                bat '''cd C:\\Program Files (x86)\\IFS\\IFSConfigBuilder10
+                IfsConfigBuilder .\\setup.ini .\\log.txt'''
             }
         }
     }
