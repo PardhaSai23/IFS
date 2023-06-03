@@ -7,7 +7,7 @@ pipeline {
                 cd /d C:\\Program Files (x86)\\IFS\\IFSConfigBuilder10
                 IfsConfigBuilder .\\setup.ini .\\log.txt
                 type log.txt'''
-                echo 'Building Folder Structure step is executed.'
+                echo '----------------------------Building Folder Structure step is executed----------------------------'
             }
         }
         stage('Build') {
@@ -15,7 +15,7 @@ pipeline {
                 bat '''cd /d D:\\Build_home\\build
                 set DELIVERY=D:\\IFS_J\\Build
                 build.cmd SERVER DB'''
-                echo 'Build step is executed.'
+                echo '----------------------------Build step is executed----------------------------'
             }
         }
     }
